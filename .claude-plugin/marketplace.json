@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "abaza738-skills",
+  "description": "Agent skills by abaza738.",
+  "owner": {
+    "name": "abaza738",
+    "url": "https://github.com/abaza738"
+  },
+  "plugins": [
+    {
+      "name": "abaza738-skills",
+      "description": "Every skill in this repository: design-engineer.",
+      "source": "./",
+      "category": "development"
+    }
+  ]
+}

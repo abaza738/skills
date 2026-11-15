@@ -1,0 +1,11 @@
+{
+  "name": "abaza738-skills",
+  "version": "1.0.0",
+  "description": "Agent skills by abaza738. Includes design-engineer, a working standard for frontend and UI work.",
+  "author": {
+    "name": "abaza738",
+    "url": "https://github.com/abaza738"
+  },
+  "license": "MIT",
+  "keywords": ["skills", "frontend", "ui", "design", "design-engineering"]
+}

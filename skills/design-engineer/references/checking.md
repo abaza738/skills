@@ -64,7 +64,7 @@ import { chromium, firefox, webkit } from 'playwright';
 for (const type of [chromium, firefox, webkit]) {
   const browser = await type.launch();
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto('http://localhost:4321/page');
+  await page.goto('http://localhost:3000/');
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: `shot-${type.name()}-1440.png`, fullPage: true });
   await browser.close();
@@ -76,11 +76,11 @@ Without Playwright, the browsers' own headless modes work for a quick capture:
 ```bash
 # Chromium or Edge
 chrome --headless=new --user-data-dir="$TMP/chrome-profile" --window-size=1440,900 \
-  --virtual-time-budget=4000 --hide-scrollbars --screenshot="$TMP/shot.png" "http://localhost:4321/page"
+  --virtual-time-budget=4000 --hide-scrollbars --screenshot="$TMP/shot.png" "http://localhost:3000/"
 
 # Firefox
 firefox --headless --no-remote --profile "$TMP/ff-profile" --window-size=1440,900 \
-  --screenshot "$TMP/ff.png" "http://localhost:4321/page"
+  --screenshot "$TMP/ff.png" "http://localhost:3000/"
 ```
 
 Known trap: Firefox's quick capture can fire before web fonts load and show a page with no text. That is not a broken page. Confirm with a second engine, or drive the browser properly (Playwright, or WebDriver BiDi through `--remote-debugging-port`) and wait for `document.fonts.ready`.
@@ -133,19 +133,14 @@ $p = Get-Process -Id <PID>   # the instance you launched
 
 A build or a page that looks fine proves nothing about fonts. Read the files.
 
-Coverage, case shapes and the weight axis, with fontTools:
+Coverage and the weight axis, with fontTools:
 
 ```python
 from fontTools.ttLib import TTFont
 f = TTFont("face.woff2")
 cmap = f.getBestCmap()
-need = set("every character the product renders, in every script it writes")
+need = set("every character the product renders")
 print("missing:", sorted(hex(ord(c)) for c in need if ord(c) not in cmap and not c.isspace()))
-hm = f["hmtx"].metrics
-for a, b in [("A", "a"), ("M", "m"), ("O", "o")]:
-    print(a, b, hm[cmap[ord(a)]][0], hm[cmap[ord(b)]][0])  # equal widths: suspect a unicase face
-os2 = f["OS/2"]
-print("xHeight", getattr(os2, "sxHeight", None), "capHeight", getattr(os2, "sCapHeight", None))  # x-height above cap height: lowercase slots hold capitals
 if "fvar" in f:
     for ax in f["fvar"].axes:
         print(ax.axisTag, ax.minValue, ax.defaultValue, ax.maxValue)  # the default is what a consumer ignoring the axis gets
@@ -153,7 +148,7 @@ if "fvar" in f:
 
 On the page, check that each face in `document.fonts` has `status === 'loaded'`, and that every non-ASCII character used falls inside a declared `unicode-range` with a file behind it. Better still, make that a build check.
 
-In PDFs, read back the embedded font names after any font change (`pdffonts file.pdf`, or list the `/FontName` entries with pypdf). A silent build can embed the wrong instance or a system fallback.
+If the product generates PDFs, read back the embedded font names after any font change (`pdffonts file.pdf`, or list the `/FontName` entries with pypdf). A silent build can embed the wrong instance or a system fallback.
 
 ## 7. Motion, reduced motion and faint effects
 
@@ -161,5 +156,4 @@ In PDFs, read back the embedded font names after any font change (`pdffonts file
 - Confirm only `transform` and `opacity` are animated: no layout properties, filters or blur in any `transition` or `@keyframes`.
 - Confirm hover styles sit inside `@media (hover: hover)`, so a tap on a phone does not leave an element lit.
 - Tab through every control. The focus ring is visible, offset from the element and follows its corners. Anything draggable has a keyboard path.
-- For a faint layer (texture, light, relief), sample pixels from a capture where the layer is and is not. A difference of one or two 8-bit levels will be invisible on some screens and banded on others. Aim for visible but quiet.
-- For slow motion of images, capture several frames in each engine and compare their sharpness. Stepping, or pulsing between sharp and soft, means drop the effect rather than blur the image to hide it.
+- For a faint layer (texture, gradient), sample pixels from a capture where the layer is and is not. A difference of one or two 8-bit levels will be invisible on some screens and banded on others. Aim for visible but quiet.

@@ -6,7 +6,7 @@ Agent skills by abaza738, for Claude Code and other agents that read `SKILL.md` 
 
 | Skill | What it does |
 |---|---|
-| [design-engineer](skills/design-engineer/SKILL.md) | A design engineer's working standard for frontend and UI work: clickable mockups, interface copy, typography, tokens, shape and buttons, light and depth without heavy effects, purposeful motion, layout patterns, maps, desktop app windows, and checking work in more than one browser engine. |
+| [design-engineer](skills/design-engineer/SKILL.md) | A design engineer's working standard for frontend and UI work: clickable mockups, interface copy, typography, tokens, shape and buttons, light and depth without heavy effects, purposeful motion, layout patterns, desktop app windows, and checking work in more than one browser engine. |
 
 ## Install
 
